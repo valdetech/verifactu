@@ -1,2 +1,6 @@
-// ponytail: placeholder — se rellena cuando el workflow de spec fije el formato canónico.
+// verifactu — librería TS libre para VeriFactu (AEAT). MIT.
 export const VERSION = '0.1.0'
+export * from './types.js'
+export * from './huella.js'
+export * from './qr.js'
+export * from './lint.js'

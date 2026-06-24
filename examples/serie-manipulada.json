@@ -1,0 +1,63 @@
+[
+  {
+    "IDVersion": "1.0",
+    "IDFactura": {
+      "IDEmisorFactura": "89890001K",
+      "NumSerieFactura": "12345678/G33",
+      "FechaExpedicionFactura": "01-01-2024"
+    },
+    "NombreRazonEmisor": "ACME SL",
+    "TipoFactura": "F1",
+    "DescripcionOperacion": "Servicios",
+    "Desglose": [],
+    "CuotaTotal": "12.35",
+    "ImporteTotal": "123.45",
+    "Encadenamiento": {
+      "PrimerRegistro": "S"
+    },
+    "SistemaInformatico": {
+      "NombreRazon": "ACME SL",
+      "NIF": "B12345678",
+      "NombreSistemaInformatico": "ACME Facturador",
+      "IdSistemaInformatico": "01",
+      "Version": "1.0",
+      "NumeroInstalacion": "001"
+    },
+    "FechaHoraHusoGenRegistro": "2024-01-01T19:20:30+01:00",
+    "TipoHuella": "01",
+    "Huella": "3C464DAF61ACB827C65FDA19F352A4E3BDC2C640E9E9FC4CC058073F38F12F60"
+  },
+  {
+    "IDVersion": "1.0",
+    "IDFactura": {
+      "IDEmisorFactura": "89890001K",
+      "NumSerieFactura": "12345679/G33",
+      "FechaExpedicionFactura": "01-01-2024"
+    },
+    "NombreRazonEmisor": "ACME SL",
+    "TipoFactura": "F1",
+    "DescripcionOperacion": "Servicios",
+    "Desglose": [],
+    "CuotaTotal": "12.35",
+    "ImporteTotal": "999.99",
+    "Encadenamiento": {
+      "RegistroAnterior": {
+        "IDEmisorFactura": "89890001K",
+        "NumSerieFactura": "12345678/G33",
+        "FechaExpedicionFactura": "01-01-2024",
+        "Huella": "3C464DAF61ACB827C65FDA19F352A4E3BDC2C640E9E9FC4CC058073F38F12F60"
+      }
+    },
+    "SistemaInformatico": {
+      "NombreRazon": "ACME SL",
+      "NIF": "B12345678",
+      "NombreSistemaInformatico": "ACME Facturador",
+      "IdSistemaInformatico": "01",
+      "Version": "1.0",
+      "NumeroInstalacion": "001"
+    },
+    "FechaHoraHusoGenRegistro": "2024-01-01T19:20:30+01:00",
+    "TipoHuella": "01",
+    "Huella": "8AA402B1A0B0917F6E4F309565C0736A2DC4E6E933E0E4B1207DFB4CE310F1FF"
+  }
+]

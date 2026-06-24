@@ -28,18 +28,41 @@ TypeScript, **independiente** y con **verificador de cumplimiento**.
 npm i verifactu
 ```
 
-## Uso (avance de API)
+## Uso
 
 ```ts
-import { buildRegistroAlta, computeHuella, chain, qrUrl, lint } from 'verifactu'
-// ... la API se documenta al cerrar la fase 1
+import { computeHuellaAlta, encadenarAltas, qrUrl, qrSvg, lint } from 'verifactu'
+
+// 1) Huella encadenada (la del registro anterior entra en el cálculo; '' en el 1º)
+const huella = computeHuellaAlta({
+  IDEmisorFactura: '89890001K',
+  NumSerieFactura: '12345678/G33',
+  FechaExpedicionFactura: '01-01-2024',
+  TipoFactura: 'F1',
+  CuotaTotal: '12.35',
+  ImporteTotal: '123.45',
+  huellaAnterior: '',
+  FechaHoraHusoGenRegistro: '2024-01-01T19:20:30+01:00',
+})
+
+// 2) QR de cotejo AEAT + leyenda
+const url = qrUrl({ nif: '89890001K', numserie: '12345678/G33', fecha: '01-01-2024', importe: '123.45' })
+const svg = await qrSvg({ nif: '89890001K', numserie: '12345678/G33', fecha: '01-01-2024', importe: '123.45' })
+
+// 3) Verificar el cumplimiento de una serie de registros de alta
+const informe = lint(misRegistrosDeAlta) // { ok, errores, avisos, incidencias[] }
 ```
 
 ## Verificador (CLI)
 
 ```bash
-npx verifactu lint registros.json
+npx verifactu lint examples/serie-valida.json   # OK  (exit 0)
+npx verifactu lint examples/serie-manipulada.json # NO CUMPLE (exit 1, detecta cadena-rota)
 ```
+
+La base técnica (formato canónico + vector oficial de prueba) está en
+[`spec/SPEC.md`](./spec/SPEC.md).
+
 
 ## Aviso legal
 
