@@ -24,9 +24,13 @@ TypeScript, **independiente** y con **verificador de cumplimiento**.
 
 ## Instalación
 
+Desde GitHub (no requiere cuenta de npm; se compila al instalar):
+
 ```bash
-npm i verifactu
+npm i github:inoguerols/verifactu
 ```
+
+> Aún no está publicado en el registro de npm. Cuando lo esté: `npm i verifactu`.
 
 ## Uso
 
