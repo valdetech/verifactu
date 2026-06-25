@@ -75,6 +75,18 @@
 </section>
 
 <section>
+<h2>Cómo funciona</h2>
+<p>VeriFactu es un sistema <strong>antifraude</strong>: una vez emites una factura, no debe poderse alterar ni borrar sin que quede rastro. El mecanismo:</p>
+<ol style="color:var(--muted);padding-left:20px">
+  <li style="margin:8px 0"><strong style="color:var(--fg)">Un registro por factura.</strong> Al emitir o anular, el software genera un registro con los datos clave (emisor, nº de serie, fecha, desglose de IVA, importe y destinatario).</li>
+  <li style="margin:8px 0"><strong style="color:var(--fg)">Huella encadenada.</strong> A cada registro se le calcula una huella SHA-256 sobre sus campos <em>más la huella del registro anterior</em>. Si alguien altera una factura del pasado, las huellas siguientes dejan de cuadrar → la manipulación se detecta.</li>
+  <li style="margin:8px 0"><strong style="color:var(--fg)">QR de cotejo.</strong> La factura lleva un QR con una URL a la AEAT y la leyenda «VERI*FACTU» para que cualquiera compruebe que está declarada.</li>
+  <li style="margin:8px 0"><strong style="color:var(--fg)">Dos formas de cumplir.</strong> <em>Veri*Factu</em>: remitir cada registro en tiempo real al web service de la AEAT (certificado, TLS mutuo). <em>No Veri*Factu</em>: conservar los registros y firmarlos con XAdES.</li>
+</ol>
+<p><code>verifactu</code> implementa cada paso y añade un <strong>verificador</strong> que comprueba el cumplimiento antes de enviar.</p>
+</section>
+
+<section>
 <h2>Qué hace</h2>
 <div class="grid">
   <div class="card"><h3>Huella encadenada</h3><p>SHA-256 canónica sobre los campos del registro + la huella anterior. Verificada dígito a dígito contra el vector oficial de la AEAT.</p></div>

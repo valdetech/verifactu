@@ -16,6 +16,34 @@ Soporta los **dos modos** del reglamento:
   **TLS mutuo** por certificado (la firma XML **no** es obligatoria).
 - **No Veri\*Factu** — registros conservados y **firmados con XAdES**.
 
+## Cómo funciona VeriFactu
+
+VeriFactu es un sistema **antifraude**: una vez emites una factura, no debe poderse
+alterar ni borrar sin que quede rastro. El mecanismo, paso a paso:
+
+1. **Un registro por factura.** Al emitir (o anular) una factura, el software genera un
+   *registro de facturación* con sus datos clave: emisor, nº de serie, fecha, tipo,
+   desglose de IVA, importe y destinatario.
+2. **Huella encadenada (hash chain).** A cada registro se le calcula una **huella
+   SHA-256** sobre sus campos **más la huella del registro anterior**. Los registros
+   quedan así **encadenados**: si alguien altera o elimina una factura del pasado, las
+   huellas posteriores dejan de cuadrar y la manipulación se detecta. El primer registro
+   de la serie usa huella anterior vacía.
+3. **QR de cotejo.** Cada factura lleva un **código QR** con una URL a la AEAT y la
+   leyenda «VERI\*FACTU». Quien la recibe puede escanearlo y comprobar que está declarada.
+4. **Dos formas de cumplir:**
+   - **Veri\*Factu** — el software **remite cada registro en tiempo real** al web service
+     de la AEAT, autenticándose con **certificado (TLS mutuo)**. Si remites, la firma XML
+     no es obligatoria.
+   - **No Veri\*Factu** — no remites en tiempo real, pero **conservas** los registros y los
+     **firmas con XAdES** para garantizar su integridad, a disposición de la AEAT.
+5. **Inalterabilidad, trazabilidad y conservación** son los principios que el sistema debe
+   garantizar de extremo a extremo.
+
+Esta librería implementa **cada uno de esos pasos** (huella y encadenamiento, QR, XML,
+remisión por TLS mutuo o firma XAdES) y añade un **verificador** que comprueba que un
+registro o una serie cumplirían **antes** de enviarlos.
+
 ## ¿Qué resuelve?
 
 El reglamento VeriFactu (RD 1007/2023 + Orden HAC/1177/2024) obliga a que el
