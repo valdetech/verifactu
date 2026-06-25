@@ -22,7 +22,7 @@ librería open source `verifactu`.
 - Obligación vigente: sociedades 1-ene-2027, resto 1-jul-2027 (RD-ley 15/2025).
 
 ## Flujo de integración
-1. `npm i verifactu`.
+1. `npm i @inoguerols/verifactu`.
 2. Localiza dónde el código **expide** facturas (numeración de serie + importe).
 3. En ese punto: construir `RegistroAlta`, calcular huella encadenada (usar la
    huella del último registro de la serie), persistirla, y renderizar el QR +

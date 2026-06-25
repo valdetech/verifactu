@@ -66,8 +66,8 @@ TypeScript, **independiente** y con **verificador de cumplimiento**.
 ## Instalación
 
 ```bash
-npm i @inoguerols/verifactu        # cuando esté publicada en npm
-npm i github:inoguerols/verifactu  # desde GitHub (se compila al instalar)
+npm i @inoguerols/verifactu        # publicada en npm (latest: 1.0.0)
+npm i github:inoguerols/verifactu  # o directamente desde GitHub
 ```
 
 Node ≥ 18. ESM.
