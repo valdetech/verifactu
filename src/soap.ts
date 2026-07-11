@@ -52,7 +52,7 @@ export interface RespuestaEnvio {
   raw: string
 }
 
-/** Extrae estado y líneas de la RespuestaSuministro de la AEAT (tolerante a NS). */
+/** Extrae estado y líneas de la RespuestaSuministro o RespuestaConsultaFactuSistemaFacturacion de la AEAT (tolerante a NS). */
 export function parseRespuesta(xml: string, httpStatus = 0): RespuestaEnvio {
   const p = new XMLParser({ removeNSPrefix: true, ignoreAttributes: true })
   let doc: Record<string, unknown> = {}
@@ -64,26 +64,26 @@ export function parseRespuesta(xml: string, httpStatus = 0): RespuestaEnvio {
   // Buscar el nodo de respuesta sin asumir prefijos exactos.
   const env = (doc.Envelope ?? doc) as Record<string, unknown>
   const body = (env.Body ?? env) as Record<string, unknown>
-  const resp = (Object.values(body).find(
-    (v) => v && typeof v === 'object' && 'RespuestaLinea' in (v as object),
-  ) ?? Object.values(body).find(
-    (v) => v && typeof v === 'object' && ('RegistroRespuestaConsultaFactuSistemaFacturacion' in (v as object) || 'RegistroRespuestaConsulta' in (v as object)),
+  const values = Object.values(body)
+  const resp = (values.find(
+    (v) => v && typeof v === 'object' && (
+      'RespuestaLinea' in (v as object) ||
+      'RegistroRespuestaConsultaFactuSistemaFacturacion' in (v as object)
+    ),
   ) ?? {}) as Record<string, unknown>
-  const rawLineas = resp.RespuestaLinea ?? resp.RegistroRespuestaConsultaFactuSistemaFacturacion ?? resp.RegistroRespuestaConsulta
+  const rawLineas = resp.RespuestaLinea ?? resp.RegistroRespuestaConsultaFactuSistemaFacturacion
   const arr = Array.isArray(rawLineas) ? rawLineas : rawLineas ? [rawLineas] : []
   const lineas: RespuestaLinea[] = arr.map((l) => {
     const o = l as Record<string, unknown>
     const id = (o.IDFactura ?? {}) as Record<string, unknown>
-    // En respuesta de consulta, EstadoRegistro es {EstadoRegistro:"Correcto",...} en vez de string
-    const er = o.EstadoRegistro as Record<string, unknown> | string | undefined
-    const estadoRegistro = typeof er === 'object' && er !== null ? str(er.EstadoRegistro) : str(er)
-    const codigoError = typeof er === 'object' && er !== null ? str(er.CodigoErrorRegistro) : str(o.CodigoErrorRegistro)
-    const descripcionError = typeof er === 'object' && er !== null ? str(er.DescripcionErrorRegistro) : str(o.DescripcionErrorRegistro)
+    // EstadoRegistro es string tanto en envío como en consulta.
+    // CodigoErrorRegistro y DescripcionErrorRegistro son hermanos de EstadoRegistro
+    // (mismo patrón que RegistroDuplicadoType en SuministroInformacion.xsd).
     return {
       numSerieFactura: str(id.NumSerieFactura),
-      estadoRegistro,
-      codigoError,
-      descripcionError,
+      estadoRegistro: str(o.EstadoRegistro),
+      codigoError: str(o.CodigoErrorRegistro),
+      descripcionError: str(o.DescripcionErrorRegistro),
     }
   })
   return {
@@ -176,6 +176,7 @@ function elc(name: string, value: string | undefined): string {
 export interface ConsultaFiltro {
   ejercicio: string
   periodo?: string
+  /** @deprecated Ignorado. El NIF del emisor se toma de la Cabecera (ObligadoEmision), no del filtro. */
   NIFEmisor?: string
   numSerieFactura?: string
   /** Clave para continuar una respuesta paginada (IndicadorPaginacion="S"). */
@@ -184,6 +185,11 @@ export interface ConsultaFiltro {
 
 /** XML de la operación de consulta (schema ConsultaLR.xsd) envuelto en RegFactu de consulta. */
 export function consultaXml(cabecera: Cabecera, f: ConsultaFiltro): string {
+  // NIFEmisor no pertenece a FiltroConsulta; el NIF va en Cabecera/ObligadoEmision.
+  // Si alguien lo pasa (p.ej. desde JS), avisar para evitar regresión silenciosa.
+  if ((f as unknown as Record<string, unknown>).NIFEmisor !== undefined) {
+    console.error('verifactu: NIFEmisor en el filtro de consulta es ignorado. El NIF del emisor se toma de la cabecera (ObligadoEmision).')
+  }
   const periodoImputacion =
     `<con:PeriodoImputacion>` +
     elc('Ejercicio', f.ejercicio) +
